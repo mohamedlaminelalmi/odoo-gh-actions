@@ -1,0 +1,44 @@
+name: Merge PR if Approved and Outside Working Hours
+
+on:
+  schedule:
+    - cron: '0 03 * * 1-5' # Every weekday at 3:00 AM UTC
+
+jobs:
+  merge_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if outside working hours
+        run: |
+          CURRENT_HOUR=$(TZ="America/Toronto" date +"%H")
+          if [ "$CURRENT_HOUR" -ge 9 ] && [ "$CURRENT_HOUR" -lt 17 ]; then
+            echo "Current time is within working hours. Skipping merge."
+            exit 1
+          fi
+
+      - name: Validate PR approval
+        run: |
+          PR_NUMBER=$(echo "${{ github.event.pull_request.url }}" | cut -d'/' -f7)
+          
+          # Fetch PR reviews
+          REVIEWS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews")
+          
+          # Check if any review is approved by the assigned user
+          APPROVED=$(echo "$REVIEWS" | jq ".[] | select(.state == \"APPROVED\" and .user.login == \"${{ github.event.pull_request.assignee.login }}\")")
+          
+          if [ -z "$APPROVED" ]; then
+            echo "Le PR n'est pas approuvé par le reviewer. Annulation du merge."
+            exit 1
+          fi
+
+      - name: Merge PR
+        run: |
+          PR_NUMBER=$(echo "${{ github.event.pull_request.url }}" | cut -d'/' -f7)
+          
+          # Merge the PR using GitHub API
+          curl -X PUT -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/merge"
