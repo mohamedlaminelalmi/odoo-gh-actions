@@ -1,0 +1,39 @@
+/**
+ * 1. Product Sticky Details
+ * -----------------------------------------------------------------------------
+ * The scss code in the below section is used for product sticky details.
+ * The goal is to display the sticky section when scrolling the page to the bottom and hide it on the top.
+ */
+.sticky-product-details {
+    position: relative;
+
+    .sticky-product-details-content {
+        display: none !important;
+        bottom: 0px;
+        border-radius: 10px 10px 4px 4px !important;
+        z-index: 1000;
+        opacity: 0.85;
+        min-width: 420px;
+
+        .product_description {
+            max-width: 850px;
+
+            .product_name {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        &.fixed {
+            display: flex !important;
+            position: fixed;
+        }
+
+        &.sticky {
+            display: flex !important;
+            position: sticky;
+        }
+    }
+}

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="website_sale_product_sticky_details" name="Sticky Product Details" priority="999"
+              inherit_id="website_sale.product" customize_show="True" active="False">
+        <xpath expr="//div[@id='oe_structure_website_sale_product_2']" position="after">
+            <div class="sticky-product-details w-100 pb-1 d-flex justify-content-center">
+                <div class="d-flex shadow-lg p-1 bg-body sticky-product-details-content">
+                    <div class="me-1">
+                        <img t-if="product" t-att-src="'/web/image/product.template/%s/image_128' % product.id"
+                             alt="Product Image"/>
+                    </div>
+                    <div class="flex-grow-1 p-1">
+                        <div class="product_description mb-3">
+                            <strong class="mb-0 pb-0 product_name" t-title="product.name" t-out="product.name"/>
+                            <p t-out="product.description_sale" class="text-muted mb-2"/>
+                        </div>
+                        <div class="d-flex">
+                            <div itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer"
+                                 t-attf-class="product_price flex-grow-1 {{'d-none' if combination_info['prevent_zero_price_sale'] else 'd-flex'}}">
+                                <b class="css_editable_mode_hidden align-self-center">
+                                    <span class="oe_price" style="white-space: nowrap;" t-out="combination_info['price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                    <span itemprop="price" style="display:none;" t-out="combination_info['price']"/>
+                                    <span itemprop="priceCurrency" style="display:none;" t-esc="website.currency_id.name"/>
+                                    <span t-attf-class="text-danger oe_default_price ms-1 h5 {{'' if combination_info['has_discounted_price'] and not combination_info['compare_list_price'] else 'd-none'}}" style="text-decoration: line-through; white-space: nowrap;" t-esc="combination_info['list_price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" itemprop="listPrice"/>
+                                    <t t-if="is_view_active('website_sale.tax_indication')" t-call="website_sale.tax_indication"/>
+                                    <del t-if="combination_info['compare_list_price'] and (combination_info['compare_list_price'] &gt; combination_info['price'])">
+                                        <bdi dir="inherit">
+                                        <span t-esc="combination_info['compare_list_price']" groups="website_sale.group_product_price_comparison" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                        </bdi>
+                                    </del>
+                                </b>
+                                <b class="css_non_editable_mode_hidden decimal_precision" t-att-data-precision="str(website.currency_id.decimal_places)">
+                                    <span t-field="product.list_price" t-options="{'widget': 'monetary', 'display_currency': product.currency_id}"/>
+                                    <t t-if="is_view_active('website_sale.tax_indication')" t-call="website_sale.tax_indication"/>
+                                    <del t-if="combination_info['compare_list_price'] and (combination_info['compare_list_price'] &gt; combination_info['price'])">
+                                        <bdi dir="inherit">
+                                        <span t-field="product.compare_list_price" groups="website_sale.group_product_price_comparison" t-options="{'widget': 'monetary', 'display_currency': product.currency_id}"/>
+                                        </bdi>
+                                    </del>
+                                </b>
+                            </div>
+                            <div class="d-inline-flex align-items-center ms-2 me-auto float-right">
+                                <t t-set="buy_now_show" t-value="request.website.viewref('website_sale.product_buy_now').active"/>
+                                <a data-animation-selector=".o_wsale_product_images" role="button" id="sticky_add_to_cart"
+                                   class="btn btn-primary js_check_product a-submit flex-grow-1" href="#">
+                                    <i class="fa fa-shopping-cart me-2"/>
+                                    Add to cart
+                                </a>
+                                <t t-if="buy_now_show">
+                                    <a role="button" id="sticky_buy_now"
+                                       class="btn btn-outline-primary btn-md d-block d-sm-inline-block o_we_buy_now te_theme_button"
+                                       href="#">
+                                        <span class="fa fa-bolt"/>
+                                        Buy Now
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
