@@ -4,9 +4,6 @@
     'version': '1.0.0',
     'category': 'Website/Website',
     'depends': ['website_sale'],
-    'external_dependencies': {
-        'python' : ['pyusb','pyserial','qrcode'],
-    },
     'description': """
     This module add a website feature to display sticky details on the bottom of the product page.
     """,
