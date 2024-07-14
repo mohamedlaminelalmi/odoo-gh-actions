@@ -2,7 +2,7 @@ name: Merge PR if Approved and Outside Working Hours
 
 on:
   schedule:
-    - cron: '17 14 * * *' # Every weekday at 3:00 AM UTC
+    - cron: '25 14 * * *' # Every weekday at 3:00 AM UTC
 
 jobs:
   merge_pr:
